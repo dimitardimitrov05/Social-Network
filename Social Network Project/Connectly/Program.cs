@@ -20,6 +20,7 @@ namespace Connectly
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
