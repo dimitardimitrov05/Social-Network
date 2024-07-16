@@ -1,8 +1,8 @@
-# Social-Network
+# Connectly
 
 ## Project Overview
 
-The Social Network Programming Project aims to develop a web-based social networking platform that enables users to connect, share, and interact with each other. The platform will offer features such as user profiles, friend requests and a news feed, providing an engaging and interactive user experience.
+Conectly is social network project that aims to develop a web-based social networking platform that enables users to connect, share, and interact with each other. The platform will offer features such as user profiles, friend requests and a news feed, providing an engaging and interactive user experience.
 
 ## Key Features
 
