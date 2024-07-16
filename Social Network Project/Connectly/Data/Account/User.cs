@@ -9,7 +9,9 @@ namespace Connectly.Data.Account
         [Required]
         public string FirstName { get; set; } = null!;
         [Required] 
-        public string LastName { get; private set; } = null!;
+        public string LastName { get; set; } = null!;
+        [Required]
+        public string Gender { get; set; } = null!;
         [Required]
         public DateTime DateOfBirth { get; set; }
         [Required]

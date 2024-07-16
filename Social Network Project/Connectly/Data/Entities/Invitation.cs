@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Connectly.Data.Account;
+using System.ComponentModel.DataAnnotations;
 
 namespace Connectly.Data.Entities
 {
@@ -9,7 +10,8 @@ namespace Connectly.Data.Entities
         [Required]
         public DateTime CreationOfInvite { get; set; }
         [Required]
-        public Guid UserCreatedTheInvite { get; set; }
+        public string UserCreatedTheInvite { get; set; } = null!;
+        public User User { get; set; }
         [Required]
         public DateTime ExpirationOfInvite { get; set; }
         [Required]

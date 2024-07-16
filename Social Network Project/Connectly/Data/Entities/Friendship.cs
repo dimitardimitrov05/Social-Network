@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Connectly.Data.Account;
+using System.ComponentModel.DataAnnotations;
 
 namespace Connectly.Data.Entities
 {
@@ -9,11 +10,12 @@ namespace Connectly.Data.Entities
         [Required]
         public DateTime SendingFriendship { get; set; }
         [Required]
-        public Guid UserThatSendTheFriendship { get; set; }
+        public string UserThatSendTheFriendship { get; set; } = null!;
+        public User User { get; set; }
         public DateTime DateOfAcceptingOrDecliningTheFriendship { get; set; }
-        public Guid UserThatAcceptedOrDeclinedTheFriendship { get; set; }
+        public string? UserThatAcceptedOrDeclinedTheFriendship { get; set; }
         public DateTime RemovingFriendship { get; set; }
-        public Guid UserThatRemovedTheFriendship { get; set; }
+        public string? UserThatRemovedTheFriendship { get; set; }
         [Required]
         public string StatusOfFriendship { get; set; } = null!;
     }
