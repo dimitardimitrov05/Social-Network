@@ -1,0 +1,64 @@
+﻿@model Connectly.Models.AccountViewModels.RegisterViewModel;
+<link href="~/css//Account/register.css" rel="stylesheet" />
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_LayoutLogin";
+}
+
+<form method="post">
+    <div class="text-center">
+        <div class="container-lg" style="padding-left: 170px; padding-right: 170px">
+            <div class="card" style="box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); border-radius: 5px; margin-top: 10%;">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h3 class="mb-4" style="color: navy">Sign up</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 mb-4" style="margin-left:auto">
+                            <input type="text" class="form-control" asp-for="FirstName" placeholder="First Name" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-right:auto">
+                            <input type="text" class="form-control" asp-for="LastName" placeholder="Last Name" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-left:auto">
+                            <input type="email" class="form-control" asp-for="EmailAddress" placeholder="Email Address" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-right:auto">
+                            <input type="text" class="form-control" asp-for="Username" placeholder="Username" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-left:auto">
+                            <input type="text" class="form-control" asp-for="Password" placeholder="Password" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-right:auto">
+                            <input type="text" class="form-control" asp-for="ConfirmPassword" placeholder="Confirm Password" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-left:auto">
+                            <select class="form-select" asp-for="Gender">
+                                <option value="" disabled selected>Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="col-5 mb-4" style="margin-right:auto">
+                            <input type="text" value="Date Of Birth" placeholder="Date Of Birth" class="form-control" asp-for="DateOfBirth" onfocus="(this.type='date')" onblur="(this.type='text')" required />
+                        </div>
+                        <div class="col-5 mb-4" style="margin-left:auto">
+                            <select class="form-select" asp-for="AccountPrivacy">
+                                <option value="" disabled selected>Account Privacy</option>
+                                <option value="Only friends">Only Friends</option>
+                                <option value="Friends of friends">Friends Of Friends</option>
+                                <option value="Private">Private</option>
+                            </select>
+                        </div>
+                        <div class="col-5 mb-4" style="margin-right:auto">
+                            <input type="text" placeholder="Verification Code" class="form-control" asp-for="VerificationCode" required />
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary" style="width: 30%; font-size: 20px">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

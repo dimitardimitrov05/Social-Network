@@ -1,7 +1,11 @@
+using Connectly.Contracts;
 using Connectly.Data;
 using Connectly.Data.Account;
+using Connectly.Helpers;
+using Connectly.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 namespace Connectly
 {
@@ -28,7 +32,17 @@ namespace Connectly
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            var emailConfig = builder.Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            builder.Services.AddSingleton(emailConfig);
+
+            builder.Services.AddSingleton(emailConfig);
+
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

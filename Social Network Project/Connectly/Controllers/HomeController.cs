@@ -1,4 +1,6 @@
-﻿using Connectly.Models;
+﻿using Connectly.Contracts;
+using Connectly.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,14 +9,23 @@ namespace Connectly.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IEmailSender emailSender)
         {
             _logger = logger;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
         {
+            if (User?.Identity?.IsAuthenticated is false)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var email = "d_dimitrov1005@abv.bg";
+            var subject = "Registration";
+            //_emailSender.SendEmailAsync(email, subject);
             return View();
         }
 
