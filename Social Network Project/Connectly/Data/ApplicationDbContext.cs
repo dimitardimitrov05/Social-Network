@@ -12,18 +12,18 @@ namespace Connectly.Data
             : base(options)
         {
         }
-
-        public DbSet<User> Users { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Post> Posts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new FriendshipConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new InvitationConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new UserRoleConfiguration());
+            builder.ApplyConfiguration(new UserFriendshipConfiguration());
 
             base.OnModelCreating(builder);
         }

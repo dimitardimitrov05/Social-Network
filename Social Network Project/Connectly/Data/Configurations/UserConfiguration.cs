@@ -16,12 +16,13 @@ namespace Connectly.Data.Configurations
                 .IsUnique(true);
 
             builder.HasMany(x => x.Invitations)
-                .WithOne(x => x.User)
+                .WithOne(x => x.CreatorUser)
                 .HasForeignKey(x => x.UserCreatedTheInvite);
 
-            builder.HasMany(x => x.Friendships)
+
+            builder.HasMany(x => x.UserFriendships)
                 .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserThatSendTheFriendship);
+                .HasForeignKey(x => x.UserId);
 
             builder.HasMany(x => x.Posts)
                 .WithOne(x => x.User)
@@ -42,8 +43,8 @@ namespace Connectly.Data.Configurations
                 Email = "admin@gmai.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
                 DateOfBirth = new DateTime(2005, 5, 10),
-                Gender = "male",
-                AccountPrivacy = "public"
+                Gender = "Male",
+                AccountPrivacy = "Public"
             };
 
             var hasher = new PasswordHasher<User>();

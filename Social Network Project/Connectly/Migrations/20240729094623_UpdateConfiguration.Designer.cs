@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Connectly.Data.Migrations
+namespace Connectly.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240716132507_Initial")]
-    partial class Initial
+    [Migration("20240729094623_UpdateConfiguration")]
+    partial class UpdateConfiguration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -120,20 +120,20 @@ namespace Connectly.Data.Migrations
                         {
                             Id = "14ca9c85-3b2c-43e8-a626-53b1a223233b",
                             AccessFailedCount = 0,
-                            AccountPrivacy = "public",
-                            ConcurrencyStamp = "a0aa3195-e41f-4f15-a6bf-7595fe63ab68",
+                            AccountPrivacy = "Public",
+                            ConcurrencyStamp = "ca67115a-f58a-42e2-b7bf-5af62a15e347",
                             DateOfBirth = new DateTime(2005, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmai.com",
                             EmailConfirmed = false,
                             FirstName = "Dimitar",
-                            Gender = "male",
+                            Gender = "Male",
                             LastName = "Dimitrov",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDSsPSqB3i65Qia6OVHL29l9RPtBfHtBhFNaP6NRZ7j3IcMoNxN4IdeNe70mhiLa0g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEF+VkSjvHJRCafvN47kHgcn/aG9b8L07RqJQjUycinILATLhdbLdxn8oKH+POrx3Sg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "346c3f10-230f-4208-bb88-200196bc55e6",
+                            SecurityStamp = "36cac6f8-23b6-471b-b020-a35bd33e192a",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -141,16 +141,14 @@ namespace Connectly.Data.Migrations
 
             modelBuilder.Entity("Connectly.Data.Entities.Friendship", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateOfAcceptingOrDecliningTheFriendship")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("RemovingFriendship")
+                    b.Property<DateTime?>("RemovingFriendship")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("SendingFriendship")
@@ -193,13 +191,19 @@ namespace Connectly.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserRegistratedFromInvite")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("VerificationCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserCreatedTheInvite");
+
+                    b.HasIndex("VerificationCode")
+                        .IsUnique();
 
                     b.ToTable("Invitations");
                 });
@@ -264,14 +268,14 @@ namespace Connectly.Data.Migrations
                         new
                         {
                             Id = "528726ea-e421-4a80-b303-f035355599de",
-                            ConcurrencyStamp = "1f476f15-2e58-4936-bff4-d49437db6267",
+                            ConcurrencyStamp = "17788e8f-9497-43ab-ad4c-8757f366ca59",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "5dd65fa9-eb2c-4372-8084-8c501347e74f",
-                            ConcurrencyStamp = "1751fe55-ba92-4652-a19d-202d050f25d3",
+                            ConcurrencyStamp = "415754e8-ea2a-40ce-92f0-782fdd526a80",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -407,13 +411,13 @@ namespace Connectly.Data.Migrations
 
             modelBuilder.Entity("Connectly.Data.Entities.Invitation", b =>
                 {
-                    b.HasOne("Connectly.Data.Account.User", "User")
+                    b.HasOne("Connectly.Data.Account.User", "CreatorUser")
                         .WithMany("Invitations")
                         .HasForeignKey("UserCreatedTheInvite")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("CreatorUser");
                 });
 
             modelBuilder.Entity("Connectly.Data.Entities.Post", b =>

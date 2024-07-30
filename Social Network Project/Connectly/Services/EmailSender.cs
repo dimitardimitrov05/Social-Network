@@ -17,7 +17,7 @@ namespace Connectly.Services
             _configuration = configuration;
         }
 
-        public void SendEmailAsync(string toEmail, string subject)
+        public void SendEmail(string toEmail, string code)
         {
             // Set up SMTP client
             SmtpClient client = new SmtpClient(_configuration.SmtpServer, _configuration.Port);
@@ -29,24 +29,15 @@ namespace Connectly.Services
             MailMessage mailMessage = new MailMessage();
             mailMessage.From = new MailAddress(_configuration.From);
             mailMessage.To.Add(toEmail);
-            mailMessage.Subject = subject;
+            mailMessage.Subject = "Verification";
             mailMessage.IsBodyHtml = true;
             StringBuilder mailBody = new StringBuilder();
-            mailBody.AppendLine("Verification code");
-            mailBody.AppendLine();
-            string code = GenerateVerificationCode();
             mailBody.AppendLine($"This is your verification code: {code}");
+            mailBody.AppendFormat("Register with the same email <a href=\"https://localhost:7283/Account/Register\">here</a>");
             mailMessage.Body = mailBody.ToString();
 
             // Send email
             client.Send(mailMessage);
-        }
-
-        private static string GenerateVerificationCode()
-        {
-            Random random = new Random();
-            int code = random.Next(100000, 1000000);
-            return code.ToString("D6");
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿@model Connectly.Models.AccountViewModels.RegisterViewModel;
-<link href="~/css//Account/register.css" rel="stylesheet" />
 @{
     ViewData["Title"] = "Register";
     Layout = "_LayoutLogin";
@@ -27,10 +26,10 @@
                             <input type="text" class="form-control" asp-for="Username" placeholder="Username" required />
                         </div>
                         <div class="col-5 mb-4" style="margin-left:auto">
-                            <input type="text" class="form-control" asp-for="Password" placeholder="Password" required />
+                            <input type="password" class="form-control" asp-for="Password" placeholder="Password" required />
                         </div>
                         <div class="col-5 mb-4" style="margin-right:auto">
-                            <input type="text" class="form-control" asp-for="ConfirmPassword" placeholder="Confirm Password" required />
+                            <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirm Password" required />
                         </div>
                         <div class="col-5 mb-4" style="margin-left:auto">
                             <select class="form-select" asp-for="Gender">
@@ -47,7 +46,7 @@
                                 <option value="" disabled selected>Account Privacy</option>
                                 <option value="Only friends">Only Friends</option>
                                 <option value="Friends of friends">Friends Of Friends</option>
-                                <option value="Private">Private</option>
+                                <option value="Private">Public</option>
                             </select>
                         </div>
                         <div class="col-5 mb-4" style="margin-right:auto">

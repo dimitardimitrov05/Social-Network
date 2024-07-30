@@ -43,6 +43,8 @@ namespace Connectly
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddScoped<IInvitationService, InvitationService>();
+            builder.Services.AddScoped<IFriendshipService, FriendshipService>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

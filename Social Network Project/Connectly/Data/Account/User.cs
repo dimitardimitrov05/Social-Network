@@ -17,7 +17,7 @@ namespace Connectly.Data.Account
         [Required]
         public string AccountPrivacy { get; set; } = null!;
         public ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
-        public ICollection<Friendship> Friendships { get; set; } = new List<Friendship>();
+        public ICollection<UserFriendship> UserFriendships { get; set; } = new List<UserFriendship>();
         public ICollection<Post> Posts { get; set; } = new List<Post>();
     }
 }

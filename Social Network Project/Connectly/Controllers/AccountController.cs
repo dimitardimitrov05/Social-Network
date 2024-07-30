@@ -1,8 +1,12 @@
-﻿using Connectly.Data.Account;
+﻿using Connectly.Contracts;
+using Connectly.Data;
+using Connectly.Data.Account;
 using Connectly.Models.AccountViewModels;
+using Connectly.Models.FriendshipViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Connectly.Controllers
 {
@@ -11,11 +15,15 @@ namespace Connectly.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly ApplicationDbContext _context;
+        private readonly IFriendshipService _friendshipService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, IFriendshipService friendshipService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
+            _friendshipService = friendshipService;
         }
 
         [HttpGet]
@@ -23,6 +31,44 @@ namespace Connectly.Controllers
         public IActionResult Register()
         {
             var model = new RegisterViewModel();
+            return View(model);
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            var findInvite = await _context.Invitations.Where(x => x.UserRegistratedFromInvite == model.EmailAddress).FirstOrDefaultAsync();
+            if (!ModelState.IsValid || findInvite == null || findInvite.VerificationCode != model.VerificationCode || DateTime.Now > findInvite.ExpirationOfInvite)
+            {
+                return View(model);
+            }
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.EmailAddress,
+                UserName = model.Username,
+                Gender = model.Gender,
+                DateOfBirth = model.DateOfBirth,
+                AccountPrivacy = model.AccountPrivacy,
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                var friendshipModel = new CreateFriendshipFromAcceptedInvitationViewModel()
+                {
+                    UserAcceptedFriendship = user.Id,
+                    UserSendedFriendship = findInvite.UserCreatedTheInvite
+                };
+                await _friendshipService.CreateFriendshipAsync(friendshipModel);
+                await _userManager.AddToRoleAsync(user, "User");
+                return RedirectToAction("Login", "Account");
+            }
+            foreach (var item in result.Errors)
+            {
+                ModelState.AddModelError("", item.Description);
+            }
             return View(model);
         }
 

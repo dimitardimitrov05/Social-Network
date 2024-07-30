@@ -23,9 +23,6 @@ namespace Connectly.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
-            var email = "d_dimitrov1005@abv.bg";
-            var subject = "Registration";
-            //_emailSender.SendEmailAsync(email, subject);
             return View();
         }
 
