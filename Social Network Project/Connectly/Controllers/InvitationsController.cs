@@ -19,18 +19,12 @@ namespace Connectly.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet]
-        public IActionResult Add()
-        {
-            var model = new CreateInviteViewModel();
-            return View(model);
-        }
         [HttpPost]
         public async Task<IActionResult> Add(CreateInviteViewModel model)
-        {
+        {   
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View();
             }
 
             var currentUser = await userManager.GetUserAsync(this.User);

@@ -16,6 +16,7 @@ namespace Connectly.Data.Account
         public DateTime DateOfBirth { get; set; }
         [Required]
         public string AccountPrivacy { get; set; } = null!;
+        public string? Image { get; set; }
         public ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
         public ICollection<UserFriendship> UserFriendships { get; set; } = new List<UserFriendship>();
         public ICollection<Post> Posts { get; set; } = new List<Post>();

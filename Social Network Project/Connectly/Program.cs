@@ -38,6 +38,11 @@ namespace Connectly
                 .Get<EmailConfiguration>();
             builder.Services.AddSingleton(emailConfig);
 
+            var cloudinarySettings = builder.Configuration
+                .GetSection("CloudinarySettings")
+                .Get<CloudinarySettings>();
+            builder.Services.AddSingleton(cloudinarySettings);
+
             builder.Services.AddSingleton(emailConfig);
 
             builder.Services.AddControllersWithViews();
@@ -45,6 +50,7 @@ namespace Connectly
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddScoped<IInvitationService, InvitationService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
+            builder.Services.AddScoped<IPostService, PostService>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

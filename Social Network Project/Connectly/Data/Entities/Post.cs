@@ -6,7 +6,7 @@ namespace Connectly.Data.Entities
     public class Post
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public DateTime CreationOfPost { get; set; }
         [Required]

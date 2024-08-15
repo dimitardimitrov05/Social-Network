@@ -56,6 +56,9 @@ namespace Connectly.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -119,7 +122,7 @@ namespace Connectly.Migrations
                             Id = "14ca9c85-3b2c-43e8-a626-53b1a223233b",
                             AccessFailedCount = 0,
                             AccountPrivacy = "Public",
-                            ConcurrencyStamp = "fd9f0656-de1c-4135-b21c-94c56cbc4d5e",
+                            ConcurrencyStamp = "9eeb17df-76b3-4647-9b8c-4fc8ec988ed0",
                             DateOfBirth = new DateTime(2005, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmai.com",
                             EmailConfirmed = false,
@@ -129,9 +132,9 @@ namespace Connectly.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAENft7KE2Dc5M39cC+v/ZvEx5i8wi9FiWL+E/ZIy9qVTRk/7R2eMBIGbXdSSVoAuwcw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEUTAuOQWwV0x+2CvtWu0jUSBD1Fm6THXIMz5ktvbfr0pUczshB/PesZOawqHS5eaQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "850de552-b589-42f0-982e-148704c3aa2f",
+                            SecurityStamp = "a50a3a14-a8d2-4840-82bb-abe46598a5b5",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -207,11 +210,9 @@ namespace Connectly.Migrations
 
             modelBuilder.Entity("Connectly.Data.Entities.Post", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationOfPost")
                         .HasColumnType("datetime2");
@@ -280,14 +281,14 @@ namespace Connectly.Migrations
                         new
                         {
                             Id = "528726ea-e421-4a80-b303-f035355599de",
-                            ConcurrencyStamp = "53f9bda1-20ca-44f4-9da9-9ddfcded0467",
+                            ConcurrencyStamp = "a96a0a07-c2c8-4b18-8e19-acb88b5ab8a7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "5dd65fa9-eb2c-4372-8084-8c501347e74f",
-                            ConcurrencyStamp = "9620062f-b6fa-40d7-875b-f5378df658ed",
+                            ConcurrencyStamp = "84b79350-d2cc-47a3-8807-fd286653ed73",
                             Name = "User",
                             NormalizedName = "USER"
                         });

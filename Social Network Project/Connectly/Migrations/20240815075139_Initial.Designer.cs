@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Connectly.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240727151917_ChangeColumn")]
-    partial class ChangeColumn
+    [Migration("20240815075139_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,6 +56,9 @@ namespace Connectly.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -120,20 +123,20 @@ namespace Connectly.Migrations
                         {
                             Id = "14ca9c85-3b2c-43e8-a626-53b1a223233b",
                             AccessFailedCount = 0,
-                            AccountPrivacy = "public",
-                            ConcurrencyStamp = "92477fb7-13e9-469b-a5ef-857d62201640",
+                            AccountPrivacy = "Public",
+                            ConcurrencyStamp = "9eeb17df-76b3-4647-9b8c-4fc8ec988ed0",
                             DateOfBirth = new DateTime(2005, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmai.com",
                             EmailConfirmed = false,
                             FirstName = "Dimitar",
-                            Gender = "male",
+                            Gender = "Male",
                             LastName = "Dimitrov",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIG5bEz0cl0978vOf7LY4pfngYBwlGGtSCx01v01YbuO8sjaAc5QulP/AFsNfediwg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEUTAuOQWwV0x+2CvtWu0jUSBD1Fm6THXIMz5ktvbfr0pUczshB/PesZOawqHS5eaQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cf614917-3e3c-4a79-a056-4b95882a6e35",
+                            SecurityStamp = "a50a3a14-a8d2-4840-82bb-abe46598a5b5",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -148,10 +151,10 @@ namespace Connectly.Migrations
                     b.Property<DateTime>("DateOfAcceptingOrDecliningTheFriendship")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("RemovingFriendship")
+                    b.Property<DateTime>("DateOfSendingFriendship")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("SendingFriendship")
+                    b.Property<DateTime?>("RemovingFriendship")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("StatusOfFriendship")
@@ -166,11 +169,9 @@ namespace Connectly.Migrations
 
                     b.Property<string>("UserThatSendTheFriendship")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserThatSendTheFriendship");
 
                     b.ToTable("Friendships");
                 });
@@ -192,6 +193,7 @@ namespace Connectly.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserRegistratedFromInvite")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VerificationCode")
@@ -210,11 +212,9 @@ namespace Connectly.Migrations
 
             modelBuilder.Entity("Connectly.Data.Entities.Post", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationOfPost")
                         .HasColumnType("datetime2");
@@ -236,6 +236,21 @@ namespace Connectly.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Connectly.Data.Entities.UserFriendship", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("FriendshipId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "FriendshipId");
+
+                    b.HasIndex("FriendshipId");
+
+                    b.ToTable("UserFriendship");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -268,14 +283,14 @@ namespace Connectly.Migrations
                         new
                         {
                             Id = "528726ea-e421-4a80-b303-f035355599de",
-                            ConcurrencyStamp = "9ca785c8-e255-4fe9-b4da-c824e175dd76",
+                            ConcurrencyStamp = "a96a0a07-c2c8-4b18-8e19-acb88b5ab8a7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "5dd65fa9-eb2c-4372-8084-8c501347e74f",
-                            ConcurrencyStamp = "252e484a-2374-4d80-8937-80baf020f63b",
+                            ConcurrencyStamp = "84b79350-d2cc-47a3-8807-fd286653ed73",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -398,17 +413,6 @@ namespace Connectly.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Connectly.Data.Entities.Friendship", b =>
-                {
-                    b.HasOne("Connectly.Data.Account.User", "User")
-                        .WithMany("Friendships")
-                        .HasForeignKey("UserThatSendTheFriendship")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Connectly.Data.Entities.Invitation", b =>
                 {
                     b.HasOne("Connectly.Data.Account.User", "CreatorUser")
@@ -427,6 +431,25 @@ namespace Connectly.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Connectly.Data.Entities.UserFriendship", b =>
+                {
+                    b.HasOne("Connectly.Data.Entities.Friendship", "Friendship")
+                        .WithMany("UserFriendships")
+                        .HasForeignKey("FriendshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Connectly.Data.Account.User", "User")
+                        .WithMany("UserFriendships")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Friendship");
 
                     b.Navigation("User");
                 });
@@ -484,11 +507,16 @@ namespace Connectly.Migrations
 
             modelBuilder.Entity("Connectly.Data.Account.User", b =>
                 {
-                    b.Navigation("Friendships");
-
                     b.Navigation("Invitations");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("UserFriendships");
+                });
+
+            modelBuilder.Entity("Connectly.Data.Entities.Friendship", b =>
+                {
+                    b.Navigation("UserFriendships");
                 });
 #pragma warning restore 612, 618
         }
