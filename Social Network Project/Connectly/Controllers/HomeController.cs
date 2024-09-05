@@ -31,10 +31,11 @@ namespace Connectly.Controllers
             var user = await _userManager.GetUserAsync(this.User);
             var model = new IndexViewModel()
             {
+                CurrentUserId = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePicture = user.Image,
-                Posts = await _postService.ListPosts()
+                Posts = await _postService.ListPosts(user.Id)
             };
             return View(model);
         }

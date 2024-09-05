@@ -100,5 +100,31 @@ namespace Connectly.Controllers
             ModelState.AddModelError("", "Invalid login");
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ProfileInfo(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                throw new ArgumentException("There isn't user with this id");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            var model = new UserProfileViewModel()
+            {
+                Id = id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
+                AccountPrivacy = user.AccountPrivacy,
+                Image = user.Image,
+                IsFriendWithCurrentUser = await _friendshipService.IsFriendAsync(currentUser.Id, user.Id)
+            };
+
+            return View(model);
+        }
     }
 }

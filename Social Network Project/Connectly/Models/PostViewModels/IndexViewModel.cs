@@ -5,6 +5,8 @@ namespace Connectly.Models.PostViewModels
     public class IndexViewModel
     {
         [Required]
+        public string CurrentUserId { get; set; } = null!;
+        [Required]
         public string FirstName { get; set; } = null!;
 
         [Required]

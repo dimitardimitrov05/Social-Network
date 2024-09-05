@@ -1,6 +1,7 @@
 ﻿using Connectly.Contracts;
 using Connectly.Data.Account;
 using Connectly.Models.InvitationViewModels;
+using Connectly.Models.PostViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,11 @@ namespace Connectly.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateInviteViewModel model)
+        public async Task<IActionResult> Add(IndexViewModel model)
         {   
-            if (!ModelState.IsValid)
+            if (model.EmailOfReceiver is null)
             {
-                return View();
+                return RedirectToAction("Index", "Home");
             }
 
             var currentUser = await userManager.GetUserAsync(this.User);

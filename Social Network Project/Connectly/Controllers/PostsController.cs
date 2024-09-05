@@ -30,5 +30,11 @@ namespace Connectly.Controllers
             await _postService.CreatePostAsync(model, user);
             return RedirectToAction("Index", "Home");
         }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _postService.DeletePostAsync(id);
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

@@ -3,6 +3,7 @@ using Connectly.Data;
 using Connectly.Data.Account;
 using Connectly.Data.Entities;
 using Connectly.Models.InvitationViewModels;
+using Connectly.Models.PostViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Connectly.Services
@@ -18,8 +19,12 @@ namespace Connectly.Services
             _emailSender = emailSender;
         }
 
-        public async Task CreateIvitationAsync(CreateInviteViewModel model, User user)
+        public async Task CreateIvitationAsync(IndexViewModel model, User user)
         {
+            if (model.EmailOfReceiver is null)
+            {
+                throw new ArgumentNullException("Email cannot be null");
+            }
             var registratedUser = await _context.Users.Where(x => x.Email == model.EmailOfReceiver).FirstOrDefaultAsync();
             if (registratedUser != null)
             {
