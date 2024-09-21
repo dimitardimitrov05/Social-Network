@@ -37,16 +37,33 @@ namespace Connectly.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(this.User);
 
-            await _friendshipService.AcceptFriendRequest(currentUser.Id, id);
+            await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, id);
             return RedirectToAction("ProfileInfo", "Account", new { id = id });
         }
 
-        public async Task<IActionResult> DeclineRequest(string userId)
+        public async Task<IActionResult> DeclineRequest(string id)
         {
             var currentUser = await _userManager.GetUserAsync(this.User);
 
-            await _friendshipService.DeclineFriendRequest(currentUser.Id, userId);
-            return RedirectToAction("ProfileInfo", "Account", new { id = userId });
+            await _friendshipService.DeclineFriendRequestAsync(currentUser.Id, id);
+            return RedirectToAction("ProfileInfo", "Account", new { id = id });
+        }
+
+        public async Task<IActionResult> RemoveFriendship(string id)
+        {
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            await _friendshipService.DeleteFriendshipAsync(currentUser.Id, id);
+            return RedirectToAction("ProfileInfo", "Account", new { id = id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FriendsOfUser()
+        {
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            var friends = await _friendshipService.FriendsOfUserAsync(currentUser.Id);
+            return View(friends);
         }
     }
 }

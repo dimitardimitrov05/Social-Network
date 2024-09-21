@@ -15,7 +15,7 @@ namespace Connectly.Services
             _context = context;
         }
 
-        public async Task AcceptFriendRequest(string currentUserId, string otherUserId)
+        public async Task AcceptFriendRequestAsync(string currentUserId, string otherUserId)
         {
             var friendship = await _context.Friendships
                 .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
@@ -70,7 +70,7 @@ namespace Connectly.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeclineFriendRequest(string currentUserId, string otherUserId)
+        public async Task DeclineFriendRequestAsync(string currentUserId, string otherUserId)
         {
             var friendship = await _context.Friendships
                 .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
@@ -84,6 +84,55 @@ namespace Connectly.Services
             }
             friendship.StatusOfFriendship = "Declined";
             await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteFriendshipAsync(string currentUserId, string otherUserId)
+        {
+            var friendship = await _context.Friendships
+                .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
+                            (x.UserThatSendTheFriendship == otherUserId && x.UserThatAcceptedOrDeclinedTheFriendship == currentUserId))
+                .FirstOrDefaultAsync();
+
+            if (friendship == null)
+            {
+                throw new ArgumentNullException("There isn't such friendship");
+            }
+            friendship.StatusOfFriendship = "Removed";
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<FriendsViewModel>> FriendsOfUserAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new ArgumentNullException("There isn't such user");
+            }
+
+            var friends = await _context.Friendships
+                .Where(x => (x.UserThatSendTheFriendship == userId) &&
+                            (x.StatusOfFriendship == "Accepted"))
+                .Select(x => x.UserThatAcceptedOrDeclinedTheFriendship)
+                .ToListAsync();
+
+            var acceptedFriends = await _context.Friendships
+                .Where(x => (x.UserThatAcceptedOrDeclinedTheFriendship == userId) &&
+                            (x.StatusOfFriendship == "Accepted"))
+                .Select(x => x.UserThatSendTheFriendship)
+                .ToListAsync();
+
+            var result = await _context.Users
+                .Where(x => friends.Any(f => x.Id == f) ||
+                       acceptedFriends.Any(f => x.Id == f))
+                .Select(x => new FriendsViewModel()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                })
+                .ToListAsync();
+
+            return result;
         }
 
         public async Task<string> IsFriendAsync(string currentUserId, string otherUserId)

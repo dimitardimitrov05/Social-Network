@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,36 +8,61 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Connectly.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css//styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body style="background-color: whitesmoke ">
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom mb-3" style="width: 100%; background-color: white; position: fixed; z-index: 1">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="font-size: 26px">Connectly</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                        </li>
-                        <li class="nav-item">
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
+    <div class="w-full flex h-svh max-h-svh">
+        <nav class="hidden h-full flex-[0.3] md:block" style="background-color: #4b4276;">
+            <div class="container mx-auto px-4">
+                <ul class="list-none flex flex-col lg:space-x mt-4">
+                    <!-- Logo -->
+                    <li class="nav-item nav-link">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="text-white no-underline">
+                            <h1 class="text-4xl uppercase mb-4 lg:mb-0">Connectly</h1>
+                        </a>
+                    </li>
+
+                    <!-- User Profile -->
+                    <li class="nav-item nav-link">
+                        <a asp-controller="Account" asp-action="CurrentUserProfile" class="text-white no-underline flex items-center">
+                            <i class="fa-regular fa-user mr-2" style="width: 20px"></i>
+                            <h5 class="inline-block">Hello @User.Identity?.Name!</h5>
+                        </a>
+                    </li>
+
+                    <!-- Friends -->
+                    <li class="nav-item nav-link">
+                        <a asp-controller="Friendships" asp-action="FriendsOfUser" class="text-white no-underline flex items-center">
+                            <i class="fa-solid fa-user-group mr-2"></i>
+                            <h5 class="inline-block">Your Friends</h5>
+                        </a>
+                    </li>
+                </ul>
             </div>
+
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        <div class="flex h-full flex-1 flex-col">
+            <div class="h-full flex-1">
+                <main role="main" class="pb-3 flex h-full flex-col justify-between overflow-y-scroll">
+                    @RenderBody()
+                </main>
+            </div>
+            <div class="fixed w-full border-gray-500 bottom-0 block py-3 flex justify-between pr-20 pl-20 md:hidden" style="background-color: #4b4276;">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-white no-underline">
+                    <i class="fa-solid fa-house" style="width: 20px"></i>
+                </a>
+                <a asp-controller="Account" asp-action="CurrentUserProfile" class="text-white no-underline flex items-center">
+                    <i class="fa-regular fa-user mr-2" style="width: 20px"></i>
+                </a>
+                <a asp-controller="Friendships" asp-action="FriendsOfUser" class="text-white no-underline flex items-center">
+                    <i class="fa-solid fa-user-group mr-2" style="width: 20px"></i>
+                </a>
+            </div>
+        </div>
     </div>
 
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

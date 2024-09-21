@@ -3,100 +3,80 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="row">
-    <div class="col-3">
-        <div style="position: fixed; margin-top: 75px">
-            @if (Model.ProfilePicture is not null)
-            {
-                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@Model.CurrentUserId" style="text-decoration: none; color: black; display:inline-block">
-                    <img src="@Model.ProfilePicture" height="50" width="50" style="border-radius: 30px">
-                    <h4 style="display: inline-block">@Model.FirstName  @Model.LastName</h4>
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@Model.CurrentUserId" style="text-decoration: none; color: black; display:inline-block">
-                    <img src="https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png" height="50" width="50" style="border-radius: 30px">
-                    <h4 style="display: inline-block">@Model.FirstName  @Model.LastName</h4>
-                </a>
-            }
-        </div>
-    </div>
-    <div class="col-6">
-        <div style="margin-top: 75px">
-            <div class="card mb-3" style=" border-radius: 10px">
-                <div class="card-body">
+<div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-8 gap-4">
+        <!-- Main content (Post section) -->
+        <div class="col-span-8 lg:col-span-6">
+            <div class="mt-4">
+                <!-- New Post -->
+                <div class="bg-white shadow rounded-lg mb-4 p-4">
                     <form method="post" asp-controller="Posts" asp-action="Add">
-                        <textarea class="form-control mb-2" style="white-space: pre-wrap;" rows="1" asp-for="PostContent" placeholder="What's on your mind"></textarea>
-                        <p class="mt-3" style="margin-bottom: 5px">Who can see this post: </p>
-                        <select class="form-control" asp-for="PostVisibility" style="width: auto; border: none; color: #0095ff; margin-left: 155px; margin-top: -35px">
-                            <option value="Friends">Friends</option>
-                            <option value="Friends of friends">Friends of friends</option>
-                            <option value="Public">Public</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary" style="border-radius: 10px; float: right; margin-top: -35px; width: 70px; font-size: 14px">Post</button>
+                        <textarea class="form-control block w-full border rounded p-2 mb-4" rows="2" asp-for="PostContent" placeholder="What's on your mind?"></textarea>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <select class="border-none text-blue-500" asp-for="PostVisibility">
+                                    <option value="" disabled selected>Who can see this post</option>
+                                    <option value="Friends">Friends</option>
+                                    <option value="Friends of friends">Friends of friends</option>
+                                    <option value="Public">Public</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full">Post</button>
+                        </div>
                     </form>
                 </div>
-            </div>
-            @foreach (var post in Model.Posts)
-            {
-                <div class="card mb-3" style="border-radius: 10px">
-                    <div class="card-body">
-                        @if (post.UserProfilePicture is not null)
-                        {
-                            <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" style="text-decoration: none;">
-                                <img src="@post.UserProfilePicture" height="40" width="40" style="border-radius: 30px; margin-bottom: -10px">
-                            </a>
-                            <div style="margin-left: 45px; margin-top: -30px">
-                                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" style="font-size: 12px; font-weight: bold; margin: 0; text-decoration: none; color: black">@post.UserFirstName  @post.UserLastName</a>
-                                <p class="text-secondary" style="font-size: 12px">@post.CreationOfPost.ToString("dd/MM/yyyy")</p>
+
+                <!-- User Posts -->
+                @foreach (var post in Model.Posts)
+                {
+                    <div class="bg-white shadow rounded-lg mb-4 p-4">
+                        <div class="flex items-center mb-4">
+                            @if (post.UserProfilePicture is not null)
+                            {
+                                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" class="inline-block">
+                                    <img src="@post.UserProfilePicture" class="h-10 w-10 rounded-full">
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" class="inline-block">
+                                    <img src="https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png" class="h-10 w-10 rounded-full">
+                                </a>
+                            }
+                            <div class="ml-3">
+                                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" class="text-black font-bold text-sm">
+                                    @post.UserFirstName @post.UserLastName
+                                </a>
+                                <p class="text-gray-500 text-xs">@post.CreationOfPost.ToString("dd/MM/yyyy")</p>
                             </div>
-                        }
-                        else
-                        {
-                            <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" style="text-decoration: none;">
-                                <img src="https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png" height="40" width="40" style="border-radius: 30px; margin-bottom: -10px">
-                            </a>
-                            <div style="margin-left: 45px; margin-top: -30px">
-                                <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@post.UserId" style="font-size: 12px; font-weight: bold; margin: 0; text-decoration: none; color: black">@post.UserFirstName  @post.UserLastName</a>
-                                <p class="text-secondary" style="font-size: 12px">@post.CreationOfPost.ToString("dd/MM/yyyy")</p>
-                            </div>
-                        }
-                        @if(post.UserId == Model.CurrentUserId)
-                        {
-                            <form>
-                                <button class="btn btn-danger" style="float: right; margin-top: -60px" asp-action="Delete" asp-controller="Posts" asp-route-id="@post.Id">Delete</button>
-                            </form>
-                        }
-                        <p style="white-space: pre-wrap;">@post.Text</p>
+                            @if (post.UserId == Model.CurrentUserId)
+                            {
+                                <form class="ml-auto">
+                                    <button class="bg-red-500 text-white py-1 px-2 rounded-full" asp-action="Delete" asp-controller="Posts" asp-route-id="@post.Id">Delete</button>
+                                </form>
+                            }
+                        </div>
+                        <p class="whitespace-pre-wrap">@post.Text</p>
                     </div>
-                </div>
-            }
-        </div>
-    </div>
-    <div class="col-3">
-        <div style="margin-top: 75px">
-            <div style="position: fixed; margin-left: 80px">
-                <div style="">
-                    <h2>Invite Friends</h2>
-                    <button type="button" id="showModal" data-toggle="modal" data-target="#invite" class="btn btn-info btn-lg" style="border-radius: 10px">Click here</button>
-                </div>
+                }
             </div>
         </div>
     </div>
-    <div class="modal fade" id="invite" tabindex="-1" role="dialog" aria-labelledby="invateLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="inviteLabel">Creating an invitation</h5>
-                    <button type="button" id="closeModal" class="close" data-dismiss="modal" aria-label="Close" style="border: none; background-color: white; font-size: 30px">
-                        <span aria-hidden="true">&times;</span>
+
+    <!-- Modal -->
+    <div class="fixed inset-0 z-50 overflow-y-auto hidden" id="invite">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <div class="flex justify-between items-center">
+                    <h5 class="text-xl font-bold">Creating an invitation</h5>
+                    <button type="button" id="closeModal" class="text-2xl" onclick="document.getElementById('invite').classList.add('hidden')">
+                        &times;
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="mt-4">
                     <form method="post">
-                        <input type="text" class="form-control" asp-for="EmailOfReceiver" placeholder="Write the email of your friend" />
-                        <button type="submit" asp-controller="Invitations" asp-action="Add" class="btn btn-primary mt-2" style="float:right">Send</button>
+                        <input type="text" class="block w-full border rounded p-2 mb-4" asp-for="EmailOfReceiver" placeholder="Write the email of your friend">
+                        <button type="submit" asp-controller="Invitations" asp-action="Add" class="bg-blue-500 text-white py-2 px-4 rounded float-right">Send</button>
                     </form>
                 </div>
             </div>

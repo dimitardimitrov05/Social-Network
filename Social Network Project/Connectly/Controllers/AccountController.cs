@@ -112,6 +112,11 @@ namespace Connectly.Controllers
 
             var currentUser = await _userManager.GetUserAsync(this.User);
 
+            if (id == currentUser.Id)
+            {
+                return RedirectToAction("CurrentUserProfile");
+            }
+
             var model = new UserProfileViewModel()
             {
                 Id = id,
@@ -122,6 +127,23 @@ namespace Connectly.Controllers
                 AccountPrivacy = user.AccountPrivacy,
                 Image = user.Image,
                 IsFriendWithCurrentUser = await _friendshipService.IsFriendAsync(currentUser.Id, user.Id)
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CurrentUserProfile()
+        {
+            var user = await _userManager.GetUserAsync(this.User);
+            var model = new CurrentUserProfileViewModel()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
+                AccountPrivacy = user.AccountPrivacy,
+                Image = user.Image,
             };
 
             return View(model);
