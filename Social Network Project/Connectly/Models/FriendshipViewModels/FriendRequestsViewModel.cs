@@ -2,7 +2,7 @@
 
 namespace Connectly.Models.FriendshipViewModels
 {
-    public class FriendsViewModel
+    public class FriendRequestsViewModel
     {
         [Required]
         public string UserId { get; set; } = null!;

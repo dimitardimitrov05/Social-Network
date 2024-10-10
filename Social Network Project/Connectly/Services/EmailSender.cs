@@ -19,13 +19,11 @@ namespace Connectly.Services
 
         public void SendEmail(string toEmail, string code)
         {
-            // Set up SMTP client
             SmtpClient client = new SmtpClient(_configuration.SmtpServer, _configuration.Port);
             client.EnableSsl = true;
             client.UseDefaultCredentials = false;
             client.Credentials = new NetworkCredential(_configuration.UserName, _configuration.Password);
 
-            // Create email message
             MailMessage mailMessage = new MailMessage();
             mailMessage.From = new MailAddress(_configuration.From);
             mailMessage.To.Add(toEmail);
@@ -36,7 +34,6 @@ namespace Connectly.Services
             mailBody.AppendFormat("Register with the same email <a href=\"https://localhost:7283/Account/Register\">here</a>");
             mailMessage.Body = mailBody.ToString();
 
-            // Send email
             client.Send(mailMessage);
         }
     }

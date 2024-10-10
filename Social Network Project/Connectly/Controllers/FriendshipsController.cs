@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Connectly.Controllers
 {
-    [Authorize]
     public class FriendshipsController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -19,7 +18,6 @@ namespace Connectly.Controllers
             _friendshipService = friendshipService;
         }
 
-        [HttpPost]
         public async Task<IActionResult> SendFriendship(string id)
         {
             var currentUser = await _userManager.GetUserAsync(this.User);
@@ -63,7 +61,34 @@ namespace Connectly.Controllers
             var currentUser = await _userManager.GetUserAsync(this.User);
 
             var friends = await _friendshipService.FriendsOfUserAsync(currentUser.Id);
-            return View(friends);
+            var model = new IndexFriendsViewModel()
+            {
+                Friends = friends,
+            };
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FriendRequests()
+        {
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            var requests = await _friendshipService.ListFriendRequestsAsync(currentUser.Id);
+            var model = new List<FriendRequestsViewModel>();
+            model.AddRange(requests);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SentRequests()
+        {
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            var requests = await _friendshipService.ListSentFriendRequestsAsync(currentUser.Id);
+            var model = new List<SentRequestsViewModel>();
+            model.AddRange(requests);
+            return View(model);
         }
     }
 }

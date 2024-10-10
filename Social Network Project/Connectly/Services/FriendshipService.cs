@@ -1,5 +1,6 @@
 ﻿using Connectly.Contracts;
 using Connectly.Data;
+using Connectly.Data.Account;
 using Connectly.Data.Entities;
 using Connectly.Models.FriendshipViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,11 @@ namespace Connectly.Services
 
             var sender = await _context.Users.Include(x => x.UserFriendships).FirstOrDefaultAsync(x => x.Id == model.UserSendedFriendship);
             var receiver = await _context.Users.Include(x => x.UserFriendships).FirstOrDefaultAsync(x => x.Id == model.UserAcceptedFriendship);
+
+            if (sender == null || receiver == null)
+            {
+                throw new ArgumentException("Something went wrong");
+            }
 
             var userFriendship1 = new UserFriendship()
             {
@@ -124,15 +130,15 @@ namespace Connectly.Services
             var result = await _context.Users
                 .Where(x => friends.Any(f => x.Id == f) ||
                        acceptedFriends.Any(f => x.Id == f))
-                .Select(x => new FriendsViewModel()
-                {
-                    Id = x.Id,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                })
                 .ToListAsync();
 
-            return result;
+            return result.Select(x => new FriendsViewModel()
+            {
+                UserId = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+            })
+                .ToList();
         }
 
         public async Task<string> IsFriendAsync(string currentUserId, string otherUserId)
@@ -162,6 +168,62 @@ namespace Connectly.Services
             {
                 throw new ArgumentException("Something went wrong");
             }
+        }
+
+        public async Task<List<FriendRequestsViewModel>> ListFriendRequestsAsync(string userId)
+        {
+            var userIds = await _context.Friendships
+                .Where(x => x.StatusOfFriendship == "Waiting" && x.UserThatAcceptedOrDeclinedTheFriendship == userId)
+                .Select(x => x.UserThatSendTheFriendship)
+                .ToListAsync();
+
+            var list = new List<FriendRequestsViewModel>();
+
+            foreach (var id in userIds) 
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    throw new ArgumentException("Something went wrong!");
+                }
+                var model = new FriendRequestsViewModel()
+                {
+                    UserId = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    ProfilePicture = user.Image
+                };
+                list.Add(model);
+            }
+            return list;
+        }
+
+        public async Task<List<SentRequestsViewModel>> ListSentFriendRequestsAsync(string currentUserId)
+        {
+            var userIds = await _context.Friendships
+                .Where(x => x.StatusOfFriendship == "Waiting" && x.UserThatSendTheFriendship == currentUserId)
+                .Select(x => x.UserThatAcceptedOrDeclinedTheFriendship)
+                .ToListAsync();
+
+            var list = new List<SentRequestsViewModel>();
+
+            foreach (var id in userIds)
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    throw new ArgumentException("Something went wrong!");
+                }
+                var model = new SentRequestsViewModel()
+                {
+                    UserId = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    ProfilePicture = user.Image
+                };
+                list.Add(model);
+            }
+            return list;
         }
 
         public async Task SendFriendshipAsync(SendFriendshipViewModel model)

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Connectly.Models.PostViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace Connectly.Models.AccountViewModels
 {
@@ -15,5 +16,7 @@ namespace Connectly.Models.AccountViewModels
         [Required]
         public string AccountPrivacy { get; set; } = null!;
         public string? Image { get; set; }
+
+        public List<PostViewModel> Posts { get; set; } = new List<PostViewModel>();
     }
 }

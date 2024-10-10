@@ -1,10 +1,9 @@
 ﻿@using Connectly.Contracts
 @using Microsoft.AspNetCore.Identity;
 @inject IGlobalService _globalService;
-<!DOCTYPE html>
-<html lang="en">
+
+<html>
 <head>
-    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Connectly</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -26,27 +25,27 @@
                     </li>
 
                     <li class="nav-item nav-link">
-                        <a asp-controller="Account" asp-action="CurrentUserProfile" class="text-white no-underline flex items-center">
-                            <i class="fa-regular fa-user mr-2" style="width: 20px"></i>
-                            <h5 class="inline-block">Hello @User.Identity?.Name!</h5>
+                        <a asp-controller="Friendships" asp-action="FriendsOfUser" class="text-white no-underline flex items-center">
+                            <i class="fa-solid fa-user-group mr-2"></i>
+                            <h5 class="inline-block">All Friends</h5>
                         </a>
                     </li>
 
                     <li class="nav-item nav-link">
-                        <a asp-controller="Friendships" asp-action="FriendsOfUser" class="relative text-white no-underline flex items-center">
-                            <i class="fa-solid fa-user-group mr-2"></i>
+                        <a asp-controller="Friendships" asp-action="FriendRequests" class="relative text-white no-underline flex items-center">
+                            <i class="fa-solid fa-user-plus mr-2"></i>
                             @if (_globalService.IsThereFriendRequests())
                             {
                                 <span class="notification"></span>
                             }
-                            <h5 class="inline-block">Your Friends</h5>
+                            <h5 class="inline-block">Friend Requests</h5>
                         </a>
                     </li>
                     <li class="nav-item nav-link">
-                        <button type="button" id="show1" data-toggle="modal" data-target="#logout" class="text-white no-underline flex items-center">
-                            <i class="fa-solid fa-arrow-right-from-bracket mr-2" style="width: 22px"></i>
-                            <h5 class="inline-block">Logout</h5>
-                        </button>
+                        <a asp-controller="Friendships" asp-action="SentRequests" class="text-white no-underline flex items-center">
+                            <i class="fa-solid fa-share mr-2" style="width: 20px"></i>
+                            <h5 class="inline-block">Your Requests</h5>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -62,41 +61,22 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="text-white no-underline">
                     <i class="fa-solid fa-house" style="width: 20px"></i>
                 </a>
-                <a asp-controller="Account" asp-action="CurrentUserProfile" class="text-white no-underline flex items-center">
-                    <i class="fa-regular fa-user mr-2" style="width: 20px"></i>
-                </a>
-                <a asp-controller="Friendships" asp-action="FriendsOfUser" class="relative text-white no-underline flex items-center">
+                <a asp-controller="Friendships" asp-action="FriendsOfUser" class="text-white no-underline flex items-center">
                     <i class="fa-solid fa-user-group mr-2" style="width: 20px"></i>
+                </a>
+                <a asp-controller="Friendships" asp-action="FriendRequests" class="relative text-white no-underline flex items-center">
+                    <i class="fa-solid fa-user-plus mr-2" style="width: 20px"></i>
                     @if (_globalService.IsThereFriendRequests())
                     {
                         <span class="mini-notification"></span>
                     }
                 </a>
-                <button type="button" id="show" data-toggle="modal" data-target="#logout" class="text-white no-underline flex items-center">
-                    <i class="fa-solid fa-arrow-right-from-bracket mr-2" style="width: 22px"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="modal fade" id="logout" tabindex="-1" role="dialog" aria-labelledby="logoutLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="logoutLabel">Are you sure that you want to logout?</h5>
-                        <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close" style="border: none; background-color: white; font-size: 30px">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                            <button type="submit" class="nav-link btn btn-link text-white" style="float: right; background-color: dodgerblue">Yes</button>
-                        </form>
-                    </div>
-                </div>
+                <a asp-controller="Friendships" asp-action="SentRequests" class="text-white no-underline flex items-center">
+                    <i class="fa-solid fa-share mr-2" style="width: 22px"></i>
+                </a>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

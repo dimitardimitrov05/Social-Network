@@ -1,13 +1,48 @@
-﻿@model List<Connectly.Models.FriendshipViewModels.FriendsViewModel>;
+﻿@model Connectly.Models.FriendshipViewModels.IndexFriendsViewModel;
+@{
+    Layout = "_LayoutFriends";
+}
 
-<div class="mt-5">
-    <div class="card">
-        <div class="card-body">
-            <div style="margin-top: 100px">
-                @foreach (var friend in Model)
-                {
-                    <h4>@friend.FirstName @friend.LastName</h4>
-                }
+<div class="container px-20">
+    <div class="grid grid-cols-1 lg:grid-cols-6 gap-2">
+        <div class="col-span-8 lg:col-span-6">
+            <div class="mt-4">
+                <div class="bg-white shadow rounded-lg mb-4 p-4 relative">
+                    <p class="text-3xl text-[#4b4276]">All Friends</p>
+                    <hr style="margin-bottom: 5%" />
+                    <div class="grid grid-cols-2">
+                        @if (Model.Friends.Any())
+                        {
+                            @foreach (var friend in Model.Friends)
+                            {
+                                <div class="flex items-center mb-4">
+                                    @if (friend.ProfilePicture is not null)
+                                    {
+                                        <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@friend.UserId" class="inline-block">
+                                            <img src="@friend.ProfilePicture" class="h-10 w-10 rounded-full">
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@friend.UserId" class="inline-block">
+                                            <img src="https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png" class="h-10 w-10 rounded-full">
+                                        </a>
+                                    }
+                                    <div class="ml-2">
+                                        <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@friend.UserId" class="text-black font-bold text-sm">
+                                            @friend.FirstName @friend.LastName
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-sm font-bold">You don't have any friends!</p>
+                            <p class="text-sm font-bold">Go and find your fellas!</p>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,4 +1,5 @@
 ﻿using Connectly.Data.Entities;
+using Connectly.Models.PostViewModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace Connectly.Models.AccountViewModels
@@ -20,5 +21,6 @@ namespace Connectly.Models.AccountViewModels
         public string? Image { get; set; }
         [Required]
         public string IsFriendWithCurrentUser { get; set; } = null!;
+        public List<PostViewModel> Posts { get; set; } = new List<PostViewModel>();
     }
 }

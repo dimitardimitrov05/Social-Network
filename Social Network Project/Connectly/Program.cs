@@ -51,6 +51,7 @@ namespace Connectly
             builder.Services.AddScoped<IInvitationService, InvitationService>();
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<IGlobalService, GlobalService>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {

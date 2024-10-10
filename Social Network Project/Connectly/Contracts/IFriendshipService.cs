@@ -11,5 +11,7 @@ namespace Connectly.Contracts
         Task DeclineFriendRequestAsync(string currentUserId, string otherUserId);
         Task DeleteFriendshipAsync(string  currentUserId, string otherUserId);
         Task<List<FriendsViewModel>> FriendsOfUserAsync(string userId);
+        Task<List<FriendRequestsViewModel>> ListFriendRequestsAsync(string userId);
+        Task<List<SentRequestsViewModel>> ListSentFriendRequestsAsync(string currentUserId);
     }
 }

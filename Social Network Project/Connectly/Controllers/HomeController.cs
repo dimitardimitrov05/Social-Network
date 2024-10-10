@@ -35,7 +35,7 @@ namespace Connectly.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePicture = user.Image,
-                Posts = await _postService.ListPosts(user.Id)
+                Posts = await _postService.ListPostsAsync(user.Id)
             };
             return View(model);
         }

@@ -16,3 +16,23 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.notification {
+    position: absolute;
+    top: -6px;
+    right: 91%;
+    padding: 4px;
+    border-radius: 100%;
+    background: red;
+    color: white;
+}
+
+.mini-notification {
+    position: absolute;
+    top: -5px;
+    right: 7px;
+    padding: 4px;
+    border-radius: 100%;
+    background: red;
+    color: white;
+}

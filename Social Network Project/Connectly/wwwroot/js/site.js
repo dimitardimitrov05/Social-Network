@@ -6,6 +6,23 @@ $('#showModal').on('click', function () {
     $('#invite').modal('show');
 })
 
+$('#showModal1').on('click', function () {
+    $('#invite').modal('show');
+})
+
+
 $('#closeModal').on('click', function () {
     $('#invite').modal('toggle');
+})
+
+$('#show').on('click', function () {
+    $('#logout').modal('show');
+})
+
+$('#show1').on('click', function () {
+    $('#logout').modal('show');
+})
+
+$('#close').on('click', function () {
+    $('#logout').modal('toggle');
 })

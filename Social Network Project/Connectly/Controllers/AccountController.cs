@@ -17,13 +17,15 @@ namespace Connectly.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly IFriendshipService _friendshipService;
+        private readonly IPostService _postService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, IFriendshipService friendshipService)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, IFriendshipService friendshipService, IPostService postService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _friendshipService = friendshipService;
+            _postService = postService;
         }
 
         [HttpGet]
@@ -126,7 +128,8 @@ namespace Connectly.Controllers
                 DateOfBirth = user.DateOfBirth,
                 AccountPrivacy = user.AccountPrivacy,
                 Image = user.Image,
-                IsFriendWithCurrentUser = await _friendshipService.IsFriendAsync(currentUser.Id, user.Id)
+                IsFriendWithCurrentUser = await _friendshipService.IsFriendAsync(currentUser.Id, user.Id),
+                Posts = await _postService.UserPostsAsync(currentUser.Id, id),
             };
 
             return View(model);
@@ -144,6 +147,7 @@ namespace Connectly.Controllers
                 DateOfBirth = user.DateOfBirth,
                 AccountPrivacy = user.AccountPrivacy,
                 Image = user.Image,
+                Posts = await _postService.CurrentUserPostsAsync(user.Id),
             };
 
             return View(model);

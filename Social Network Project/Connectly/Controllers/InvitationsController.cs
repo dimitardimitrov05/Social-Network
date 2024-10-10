@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Connectly.Controllers
 {
-    [Authorize]
     public class InvitationsController : Controller
     {
         private readonly IInvitationService invitationService;

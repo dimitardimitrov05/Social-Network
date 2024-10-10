@@ -1,0 +1,42 @@
+﻿@model List<Connectly.Models.FriendshipViewModels.SentRequestsViewModel>
+@{
+    Layout = "_LayoutFriends";
+}
+
+<div class="mt-4">
+    <div class="w-full sm:w-full lg:w-2/3 relative px-2 mx-auto">
+        <div class="bg-white shadow rounded-lg mb-4 p-4">
+            <p class="text-3xl text-[#4b4276]">Your sent friend requests</p>
+            <hr style="margin-bottom: 5%" />
+            @if (Model.Any())
+            {
+                @foreach (var request in Model)
+                {
+                    <div class="flex items-center mb-4">
+                        @if (request.ProfilePicture is not null)
+                        {
+                            <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@request.UserId" class="inline-block">
+                                <img src="@request.ProfilePicture" class="h-10 w-10 rounded-full">
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@request.UserId" class="inline-block">
+                                <img src="https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png" class="h-10 w-10 rounded-full">
+                            </a>
+                        }
+                        <div class="ml-2">
+                            <a asp-controller="Account" asp-action="ProfileInfo" asp-route-id="@request.UserId" class="text-black font-bold text-sm">
+                                @request.FirstName @request.LastName
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-sm font-bold">You haven't sent any requests!</p>
+            }
+        </div>
+    </div>
+</div>
