@@ -4,11 +4,11 @@ namespace Connectly.Contracts
 {
     public interface IPostRepository
     {
-        Task<Post> FindPostById(Guid postId);
-        Task<Post> AddPost(Post post);
-        Task<List<Post>> GetCurrentUserPosts(string currentUserId);
-        Task<List<Post>> GetAllVisiblePostsForCurrentUser(string currentUserId);
-        Task<List<Post>> GetOneUserVisiblePostsForCurrentUser(string currentUserId, string otherUserId);
-        Task DeletePost(Post post);
+        Task<Post> FindPostByIdAsync(Guid postId);
+        Task<List<Post>> GetCurrentUserPostsAsync(string currentUserId);
+        Task<List<Post>> GetAllVisiblePostsForCurrentUserAsync(string currentUserId);
+        Task<List<Post>> GetOneUserVisiblePostsForCurrentUserAsync(string currentUserId, string otherUserId);
+        Task AddPostAsync(Post post);
+        Task DeletePostAsync(Post post);
     }
 }

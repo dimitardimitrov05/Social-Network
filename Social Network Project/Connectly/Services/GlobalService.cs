@@ -7,20 +7,24 @@ namespace Connectly.Services
 {
     public class GlobalService : IGlobalService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IFriendshipRepository _friendshipRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GlobalService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public GlobalService(IFriendshipRepository friendshipRepository, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
+            _friendshipRepository = friendshipRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public bool IsThereFriendRequests()
         {
             var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                throw new ArgumentException("Something went wrong!");
+            }
             
-            return _context.Friendships.Any(x => x.UserThatAcceptedOrDeclinedTheFriendship ==  userId && x.StatusOfFriendship == "Waiting");
+            return _friendshipRepository.AreThereFriendRequests(userId);
         }
     }
 }

@@ -36,8 +36,8 @@ namespace Connectly.Data.Configurations
             var user = new User()
             {
                 Id = "14ca9c85-3b2c-43e8-a626-53b1a223233b",
-                FirstName = "Dimitar",
-                LastName = "Dimitrov",
+                FirstName = "Admin",
+                LastName = "Admin",
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
                 Email = "admin@gmai.com",

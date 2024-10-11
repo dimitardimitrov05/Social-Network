@@ -4,8 +4,8 @@ namespace Connectly.Contracts
 {
     public interface IUserRepository
     {
-        Task<User> FindUserById(string id);
-        Task<User> FindUserByEmail(string email);
-        Task<List<User>> FindCurrentUserFriends(string currentUserId);
+        Task<User> FindUserByIdAsync(string id);
+        bool IsTherUserWithThisEmail(string email);
+        Task<List<User>> FindCurrentUserFriendsAsync(string currentUserId);
     }
 }

@@ -10,12 +10,14 @@ namespace Connectly.Services
 {
     public class InvitationService : IInvitationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IInvitationRepository _invitationRepository;
         private readonly IEmailSender _emailSender;
 
-        public InvitationService(ApplicationDbContext context, IEmailSender emailSender)
+        public InvitationService(IUserRepository userRepository, IInvitationRepository invitationRepository, IEmailSender emailSender)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _invitationRepository = invitationRepository;
             _emailSender = emailSender;
         }
 
@@ -25,8 +27,8 @@ namespace Connectly.Services
             {
                 throw new ArgumentNullException("Email cannot be null");
             }
-            var registratedUser = await _context.Users.Where(x => x.Email == model.EmailOfReceiver).FirstOrDefaultAsync();
-            if (registratedUser != null)
+            var registratedUser = _userRepository.IsTherUserWithThisEmail(model.EmailOfReceiver);
+            if (registratedUser)
             {
                 throw new ArgumentException("There is registrated user with this email");
             }
@@ -40,8 +42,7 @@ namespace Connectly.Services
                 UserRegistratedFromInvite = model.EmailOfReceiver,
                 VerificationCode = CreateRandomVerificationCode()
             };
-            await _context.Invitations.AddAsync(invitation);
-            await _context.SaveChangesAsync();
+            await _invitationRepository.AddInvitationAsync(invitation);
             _emailSender.SendEmail(model.EmailOfReceiver, invitation.VerificationCode);
         }
 

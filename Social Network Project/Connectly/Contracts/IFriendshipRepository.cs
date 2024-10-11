@@ -4,16 +4,17 @@ namespace Connectly.Contracts
 {
     public interface IFriendshipRepository
     {
-        Task<Friendship> FindFriendshipWithWaitingStatusByTwoIds(string currentUserId, string otherUserId);
-        Task<Friendship> FindFriendshipWithAcceptedStatusByTwoIds(string currentUserId, string otherUserId);
-        Task<List<string>> FindIdsOfCurrnetUserAcceptedFriends(string currentUserId);
-        Task<List<string>> FindIdsOfCurrnetUserFriendsThatHeAccepted(string currentUserId);
-        Task<List<string>> FindIdsOfAllFriends(string currentUserId);
-        Task<List<string>> FindIdsOfAllFriendsOfFriends(string currentUserId);
-        Task<List<string>> FindIdsOfUsersThatSentFriendRequestToCurrentUser(string currentUserId);
-        Task<List<string>> FindIdsOfUsersThatCurrentUserSentFriendRequestTo(string currentUserId);
-        Task AddFriendship(Friendship friendship);
-        Task EditFriendship(Friendship friendship);
-        Task<bool> AreThereFriendRequests(string currentUserId);
+        Task<Friendship> FindFriendshipByTwoIdsAsync(string currentUserId, string otherUserId);
+        Task<Friendship> FindFriendshipWithWaitingStatusByTwoIdsAsync(string currentUserId, string otherUserId);
+        Task<Friendship> FindFriendshipWithAcceptedStatusByTwoIdsAsync(string currentUserId, string otherUserId);
+        Task<List<string>> FindIdsOfCurrnetUserAcceptedFriendsAsync(string currentUserId);
+        Task<List<string>> FindIdsOfCurrnetUserFriendsThatHeAcceptedAsync(string currentUserId);
+        Task<List<string>> FindIdsOfAllFriendsAsync(string currentUserId);
+        Task<List<string>> FindIdsOfAllFriendsOfFriendsAsync(string currentUserId);
+        Task<List<string>> FindIdsOfUsersThatSentFriendRequestToCurrentUserAsync(string currentUserId);
+        Task<List<string>> FindIdsOfUsersThatCurrentUserSentFriendRequestToAsync(string currentUserId);
+        Task AddFriendshipAsync(Friendship friendship);
+        Task EditFriendshipAsync(Friendship friendship);
+        bool AreThereFriendRequests(string currentUserId);
     }
 }

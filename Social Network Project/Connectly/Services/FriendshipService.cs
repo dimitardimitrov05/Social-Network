@@ -9,27 +9,25 @@ namespace Connectly.Services
 {
     public class FriendshipService : IFriendshipService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IFriendshipRepository _friendshipRepository;
+        private readonly IUserRepository _userRepository;
 
-        public FriendshipService(ApplicationDbContext context)
+        public FriendshipService(IFriendshipRepository friendshipRepository, IUserRepository userRepository)
         {
-            _context = context;
+            _friendshipRepository = friendshipRepository;
+            _userRepository = userRepository;
         }
 
         public async Task AcceptFriendRequestAsync(string currentUserId, string otherUserId)
         {
-            var friendship = await _context.Friendships
-                .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
-                            (x.UserThatSendTheFriendship == otherUserId && x.UserThatAcceptedOrDeclinedTheFriendship == currentUserId) &&
-                            (x.StatusOfFriendship == "Waiting"))
-                .FirstOrDefaultAsync();
+            var friendship = await _friendshipRepository.FindFriendshipWithWaitingStatusByTwoIdsAsync(currentUserId, otherUserId);
 
             if (friendship == null)
             {
                 throw new ArgumentNullException("There isn't such friendship");
             }
             friendship.StatusOfFriendship = "Accepted";
-            await _context.SaveChangesAsync();
+            await _friendshipRepository.EditFriendshipAsync(friendship);
         }
 
         public async Task CreateFriendshipAsync(CreateFriendshipFromAcceptedInvitationViewModel model)
@@ -45,10 +43,9 @@ namespace Connectly.Services
                 UserThatRemovedTheFriendship = null,
                 StatusOfFriendship = "Accepted"
             };
-            await _context.Friendships.AddAsync(friendship);
 
-            var sender = await _context.Users.Include(x => x.UserFriendships).FirstOrDefaultAsync(x => x.Id == model.UserSendedFriendship);
-            var receiver = await _context.Users.Include(x => x.UserFriendships).FirstOrDefaultAsync(x => x.Id == model.UserAcceptedFriendship);
+            var sender = await _userRepository.FindUserByIdAsync(model.UserSendedFriendship);
+            var receiver = await _userRepository.FindUserByIdAsync(model.UserAcceptedFriendship);
 
             if (sender == null || receiver == null)
             {
@@ -73,80 +70,59 @@ namespace Connectly.Services
 
             sender.UserFriendships.Add(userFriendship1);
             receiver.UserFriendships.Add(userFriendship2);
-            await _context.SaveChangesAsync();
+            await _friendshipRepository.AddFriendshipAsync(friendship);
         }
 
         public async Task DeclineFriendRequestAsync(string currentUserId, string otherUserId)
         {
-            var friendship = await _context.Friendships
-                .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
-                            (x.UserThatSendTheFriendship == otherUserId && x.UserThatAcceptedOrDeclinedTheFriendship == currentUserId) &&
-                            (x.StatusOfFriendship == "Waiting"))
-                .FirstOrDefaultAsync();
-
+            var friendship = await _friendshipRepository.FindFriendshipWithWaitingStatusByTwoIdsAsync(currentUserId, otherUserId);
             if (friendship == null)
             {
                 throw new ArgumentNullException("There isn't such friendship");
             }
             friendship.StatusOfFriendship = "Declined";
-            await _context.SaveChangesAsync();
+            await _friendshipRepository.EditFriendshipAsync(friendship);
         }
 
         public async Task DeleteFriendshipAsync(string currentUserId, string otherUserId)
         {
-            var friendship = await _context.Friendships
-                .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId) ||
-                            (x.UserThatSendTheFriendship == otherUserId && x.UserThatAcceptedOrDeclinedTheFriendship == currentUserId))
-                .FirstOrDefaultAsync();
+            var friendship = await _friendshipRepository.FindFriendshipWithAcceptedStatusByTwoIdsAsync(currentUserId, otherUserId);
 
             if (friendship == null)
             {
                 throw new ArgumentNullException("There isn't such friendship");
             }
             friendship.StatusOfFriendship = "Removed";
-            await _context.SaveChangesAsync();
+            friendship.RemovingFriendship = DateTime.Now;
+            friendship.UserThatRemovedTheFriendship = currentUserId;
+            await _friendshipRepository.EditFriendshipAsync(friendship);
         }
 
         public async Task<List<FriendsViewModel>> FriendsOfUserAsync(string userId)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _userRepository.FindUserByIdAsync(userId);
             if (user == null)
             {
                 throw new ArgumentNullException("There isn't such user");
             }
 
-            var friends = await _context.Friendships
-                .Where(x => (x.UserThatSendTheFriendship == userId) &&
-                            (x.StatusOfFriendship == "Accepted"))
-                .Select(x => x.UserThatAcceptedOrDeclinedTheFriendship)
-                .ToListAsync();
+            var friends = await _friendshipRepository.FindIdsOfCurrnetUserAcceptedFriendsAsync(userId);
 
-            var acceptedFriends = await _context.Friendships
-                .Where(x => (x.UserThatAcceptedOrDeclinedTheFriendship == userId) &&
-                            (x.StatusOfFriendship == "Accepted"))
-                .Select(x => x.UserThatSendTheFriendship)
-                .ToListAsync();
+            var acceptedFriends = await _friendshipRepository.FindIdsOfCurrnetUserFriendsThatHeAcceptedAsync(userId);
 
-            var result = await _context.Users
-                .Where(x => friends.Any(f => x.Id == f) ||
-                       acceptedFriends.Any(f => x.Id == f))
-                .ToListAsync();
+            var result = await _userRepository.FindCurrentUserFriendsAsync(userId);
 
             return result.Select(x => new FriendsViewModel()
             {
                 UserId = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-            })
-                .ToList();
+            }).ToList();
         }
 
         public async Task<string> IsFriendAsync(string currentUserId, string otherUserId)
         {
-            var friendship = await _context.Friendships
-                .Where(x => (x.UserThatSendTheFriendship == currentUserId && x.UserThatAcceptedOrDeclinedTheFriendship == otherUserId ) || 
-                            (x.UserThatSendTheFriendship == otherUserId && x.UserThatAcceptedOrDeclinedTheFriendship == currentUserId))
-                .FirstOrDefaultAsync();
+            var friendship = await _friendshipRepository.FindFriendshipByTwoIdsAsync(currentUserId, otherUserId);
 
             if (friendship == null || friendship.StatusOfFriendship == "Removed" || friendship.StatusOfFriendship == "Declined")
             {
@@ -172,16 +148,13 @@ namespace Connectly.Services
 
         public async Task<List<FriendRequestsViewModel>> ListFriendRequestsAsync(string userId)
         {
-            var userIds = await _context.Friendships
-                .Where(x => x.StatusOfFriendship == "Waiting" && x.UserThatAcceptedOrDeclinedTheFriendship == userId)
-                .Select(x => x.UserThatSendTheFriendship)
-                .ToListAsync();
+            var userIds = await _friendshipRepository.FindIdsOfUsersThatCurrentUserSentFriendRequestToAsync(userId);
 
             var list = new List<FriendRequestsViewModel>();
 
             foreach (var id in userIds) 
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userRepository.FindUserByIdAsync(id);
                 if (user == null)
                 {
                     throw new ArgumentException("Something went wrong!");
@@ -200,16 +173,13 @@ namespace Connectly.Services
 
         public async Task<List<SentRequestsViewModel>> ListSentFriendRequestsAsync(string currentUserId)
         {
-            var userIds = await _context.Friendships
-                .Where(x => x.StatusOfFriendship == "Waiting" && x.UserThatSendTheFriendship == currentUserId)
-                .Select(x => x.UserThatAcceptedOrDeclinedTheFriendship)
-                .ToListAsync();
+            var userIds = await _friendshipRepository.FindIdsOfUsersThatSentFriendRequestToCurrentUserAsync(currentUserId);
 
             var list = new List<SentRequestsViewModel>();
 
             foreach (var id in userIds)
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userRepository.FindUserByIdAsync(id);
                 if (user == null)
                 {
                     throw new ArgumentException("Something went wrong!");
@@ -240,8 +210,7 @@ namespace Connectly.Services
                 StatusOfFriendship = "Waiting"
             };
 
-            await _context.Friendships.AddAsync(friendship);
-            await _context.SaveChangesAsync();
+           await _friendshipRepository.AddFriendshipAsync(friendship);
         }
     }
 }

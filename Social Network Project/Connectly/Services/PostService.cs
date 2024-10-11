@@ -9,11 +9,13 @@ namespace Connectly.Services
 {
     public class PostService : IPostService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPostRepository _postRepository;
+        private readonly IFriendshipRepository _friendshipRepository;
 
-        public PostService(ApplicationDbContext context)
+        public PostService(IPostRepository postRepository, IFriendshipRepository friendshipRepository)
         {
-            _context = context;
+            _postRepository = postRepository;
+            _friendshipRepository = friendshipRepository;
         }
 
         public async Task CreatePostAsync(IndexViewModel model, User user)
@@ -26,64 +28,43 @@ namespace Connectly.Services
                 Text = model.PostContent!,
                 Visibility = model.PostVisibility!
             };
-            await _context.Posts.AddAsync(post);
-            await _context.SaveChangesAsync();
+            await _postRepository.AddPostAsync(post);
         }
 
         public async Task<List<PostViewModel>> CurrentUserPostsAsync(string currentUserId)
         {
-            return await _context.Posts.Where(x => x.UserId == currentUserId)
-                .Select(x => new PostViewModel()
-                {
-                    Id = x.Id,
-                    Text = x.Text,
-                    UserFirstName = x.User.FirstName,
-                    UserLastName = x.User.LastName,
-                    UserProfilePicture = x.User.Image,
-                    CreationOfPost = x.CreationOfPost,
-                    Visibility = x.Visibility,
-                    UserId = x.UserId,
-                }).ToListAsync();
+            var post = await _postRepository.GetCurrentUserPostsAsync(currentUserId);
+            return post.Select(x => new PostViewModel()
+            {
+                Id = x.Id,
+                Text = x.Text,
+                UserFirstName = x.User.FirstName,
+                UserLastName = x.User.LastName,
+                UserProfilePicture = x.User.Image,
+                CreationOfPost = x.CreationOfPost,
+                Visibility = x.Visibility,
+                UserId = x.UserId,
+            }).ToList();
         }
 
         public async Task DeletePostAsync(Guid id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _postRepository.FindPostByIdAsync(id);
             if (post == null)
             {
                 throw new ArgumentNullException("There isn't post with this id");
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            await _postRepository.DeletePostAsync(post);
         }
 
         public async Task<List<PostViewModel>> ListPostsAsync(string currentUserId)
         {
-            var userFriendIds = await _context.Friendships
-           .Where(f => f.StatusOfFriendship == "Accepted" &&
-                      (f.UserThatSendTheFriendship == currentUserId || f.UserThatAcceptedOrDeclinedTheFriendship == currentUserId))
-           .Select(f => f.UserThatSendTheFriendship == currentUserId ? f.UserThatAcceptedOrDeclinedTheFriendship : f.UserThatSendTheFriendship)
-           .ToListAsync();
+            var userFriendIds = await _friendshipRepository.FindIdsOfAllFriendsAsync(currentUserId);
 
-            userFriendIds.Add(currentUserId);
+            var friendsOfFriendsIds = await _friendshipRepository.FindIdsOfAllFriendsOfFriendsAsync(currentUserId);
 
-            var friendsOfFriendsIds = await _context.Friendships
-                .Where(f => f.StatusOfFriendship == "Accepted" &&
-                           (userFriendIds.Contains(f.UserThatSendTheFriendship) || userFriendIds.Contains(f.UserThatAcceptedOrDeclinedTheFriendship)))
-                .Select(f => f.UserThatSendTheFriendship != currentUserId && !userFriendIds.Contains(f.UserThatSendTheFriendship) ? f.UserThatSendTheFriendship : f.UserThatAcceptedOrDeclinedTheFriendship)
-                .Distinct()
-                .ToListAsync();
-
-            var visiblePosts = await _context.Posts
-                .Include(p => p.User)
-                .ThenInclude(x => x.UserFriendships)
-                .ThenInclude(x => x.Friendship)
-                .Where(p =>
-                    p.Visibility == "Public" ||
-                    (p.Visibility == "Friends" && userFriendIds.Contains(p.UserId))  ||
-                    (p.Visibility == "Friends Of friends" && (userFriendIds.Contains(p.UserId) || friendsOfFriendsIds.Contains(p.UserId))))
-                .ToListAsync();
+            var visiblePosts = await _postRepository.GetAllVisiblePostsForCurrentUserAsync(currentUserId);
 
             return visiblePosts
                 .Select(x => new PostViewModel
@@ -102,31 +83,11 @@ namespace Connectly.Services
 
         public async Task<List<PostViewModel>> UserPostsAsync(string currentUserId, string otherUserId)
         {
-            var userFriendIds = await _context.Friendships
-           .Where(f => f.StatusOfFriendship == "Accepted" &&
-                      (f.UserThatSendTheFriendship == currentUserId || f.UserThatAcceptedOrDeclinedTheFriendship == currentUserId))
-           .Select(f => f.UserThatSendTheFriendship == currentUserId ? f.UserThatAcceptedOrDeclinedTheFriendship : f.UserThatSendTheFriendship)
-           .ToListAsync();
+            var userFriendIds = await _friendshipRepository.FindIdsOfAllFriendsAsync(currentUserId);
 
-            userFriendIds.Add(currentUserId);
+            var friendsOfFriendsIds = await _friendshipRepository.FindIdsOfAllFriendsOfFriendsAsync(currentUserId);
 
-            var friendsOfFriendsIds = await _context.Friendships
-                .Where(f => f.StatusOfFriendship == "Accepted" &&
-                           (userFriendIds.Contains(f.UserThatSendTheFriendship) || userFriendIds.Contains(f.UserThatAcceptedOrDeclinedTheFriendship)))
-                .Select(f => f.UserThatSendTheFriendship != currentUserId && !userFriendIds.Contains(f.UserThatSendTheFriendship) ? f.UserThatSendTheFriendship : f.UserThatAcceptedOrDeclinedTheFriendship)
-                .Distinct()
-                .ToListAsync();
-
-            var visiblePosts = await _context.Posts
-                .Include(p => p.User)
-                .ThenInclude(x => x.UserFriendships)
-                .ThenInclude(x => x.Friendship)
-                .Where(p => p.UserId == otherUserId &&
-                        (p.Visibility == "Public" ||
-                        (p.Visibility == "Friends" && userFriendIds.Contains(otherUserId)) ||
-                        (p.Visibility == "Friends of friends" && (userFriendIds.Contains(otherUserId) || friendsOfFriendsIds.Contains(otherUserId)))))
-            .OrderByDescending(p => p.CreationOfPost)
-            .ToListAsync();
+            var visiblePosts = await _postRepository.GetOneUserVisiblePostsForCurrentUserAsync(currentUserId, otherUserId);
 
             return visiblePosts
                 .Select(x => new PostViewModel

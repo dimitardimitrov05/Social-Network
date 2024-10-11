@@ -4,7 +4,7 @@ namespace Connectly.Contracts
 {
     public interface IInvitationRepository
     {
-        Task AddInvitation(Invitation invitation);
-        Task<Invitation> FindInvitationByEmail(string email);
+        Task AddInvitationAsync(Invitation invitation);
+        Task<Invitation> FindInvitationByEmailAsync(string email);
     }
 }

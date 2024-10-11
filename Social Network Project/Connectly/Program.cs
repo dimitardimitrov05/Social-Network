@@ -2,6 +2,7 @@ using Connectly.Contracts;
 using Connectly.Data;
 using Connectly.Data.Account;
 using Connectly.Helpers;
+using Connectly.Repositories;
 using Connectly.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,10 @@ namespace Connectly
             builder.Services.AddScoped<IFriendshipService, FriendshipService>();
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IGlobalService, GlobalService>();
+            builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+            builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
