@@ -17,10 +17,11 @@ Conectly is social network project that aims to develop a web-based social netwo
 - **Backend**: C#
 - **Database**: Microsoft SQL Server
 
-## Project Goals
-
-1. Create a scalable and secure social networking platform.
-2. Ensure an intuitive and user-friendly interface.
-3. Implement efficient real-time communication and notifications.
-
 ## Getting Started
+
+
+
+
+This concludes the setup guide for this project. If you need further assistance you can reach me via email:
+- **Full name**: Dimitar Dimitrov
+- **Email**: d_dimitrov1005@abv.bg
