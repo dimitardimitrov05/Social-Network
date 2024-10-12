@@ -7,7 +7,6 @@ Conectly is social network project that aims to develop a web-based social netwo
 ## Key Features
 
 - **User Authentication**: Secure user registration and login system.
-- **User Profiles**: Customizable user profiles with profile pictures, bios, and activity logs.
 - **Friendship Management**: Ability to send, accept, and manage friend requests.
 - **News Feed**: A dynamic feed displaying posts, updates, and activities from friends.
 - **Post Creation and Interaction**: Users can create posts and share content.
