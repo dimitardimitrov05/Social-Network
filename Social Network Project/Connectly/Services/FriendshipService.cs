@@ -198,19 +198,31 @@ namespace Connectly.Services
 
         public async Task SendFriendshipAsync(SendFriendshipViewModel model)
         {
-            var friendship = new Friendship()
+            var existingFriendship = await _friendshipRepository.FindExistingDeclinedOrRemovedFriendship(model.SenderId, model.ReceiverId);
+            if (existingFriendship == null)
             {
-                Id = Guid.NewGuid(),
-                DateOfSendingFriendship = DateTime.Now,
-                UserThatSendTheFriendship = model.SenderId,
-                DateOfAcceptingOrDecliningTheFriendship = default(DateTime),
-                UserThatAcceptedOrDeclinedTheFriendship = model.ReceiverId,
-                RemovingFriendship = null,
-                UserThatRemovedTheFriendship = null,
-                StatusOfFriendship = "Waiting"
-            };
-
-           await _friendshipRepository.AddFriendshipAsync(friendship);
+                var friendship = new Friendship()
+                {
+                    Id = Guid.NewGuid(),
+                    DateOfSendingFriendship = DateTime.Now,
+                    UserThatSendTheFriendship = model.SenderId,
+                    DateOfAcceptingOrDecliningTheFriendship = null,
+                    UserThatAcceptedOrDeclinedTheFriendship = model.ReceiverId,
+                    RemovingFriendship = null,
+                    UserThatRemovedTheFriendship = null,
+                    StatusOfFriendship = "Waiting"
+                };
+                await _friendshipRepository.AddFriendshipAsync(friendship);
+            }
+            else
+            {
+                existingFriendship.UserThatSendTheFriendship = model.SenderId;
+                existingFriendship.UserThatAcceptedOrDeclinedTheFriendship = model.ReceiverId;
+                existingFriendship.StatusOfFriendship = "Waiting";
+                existingFriendship.RemovingFriendship = null;
+                existingFriendship.UserThatRemovedTheFriendship = null;
+                await _friendshipRepository.EditFriendshipAsync(existingFriendship);
+            }
         }
     }
 }

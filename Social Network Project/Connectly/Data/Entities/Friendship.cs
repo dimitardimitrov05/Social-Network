@@ -11,7 +11,7 @@ namespace Connectly.Data.Entities
         public DateTime DateOfSendingFriendship { get; set; }
         [Required]
         public string UserThatSendTheFriendship { get; set; } = null!;
-        public DateTime DateOfAcceptingOrDecliningTheFriendship { get; set; }
+        public DateTime? DateOfAcceptingOrDecliningTheFriendship { get; set; }
         [Required]
         public string UserThatAcceptedOrDeclinedTheFriendship { get; set; } = null!;
         public DateTime? RemovingFriendship { get; set; }

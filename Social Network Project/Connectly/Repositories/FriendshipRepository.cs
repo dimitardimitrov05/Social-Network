@@ -32,6 +32,15 @@ namespace Connectly.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<Friendship> FindExistingDeclinedOrRemovedFriendship(string senderId, string receiverId)
+        {
+            return await _context.Friendships
+                .Where(x => (x.StatusOfFriendship == "Removed" || x.StatusOfFriendship == "Declined") &&
+                            (x.UserThatSendTheFriendship == senderId && x.UserThatAcceptedOrDeclinedTheFriendship == receiverId) ||
+                            (x.UserThatSendTheFriendship == receiverId && x.UserThatAcceptedOrDeclinedTheFriendship == senderId))
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Friendship> FindFriendshipByTwoIdsAsync(string currentUserId, string otherUserId)
         {
             return await _context.Friendships

@@ -4,6 +4,7 @@ namespace Connectly.Contracts
 {
     public interface IFriendshipRepository
     {
+        Task<Friendship> FindExistingDeclinedOrRemovedFriendship(string senderId, string receiverId);
         Task<Friendship> FindFriendshipByTwoIdsAsync(string currentUserId, string otherUserId);
         Task<Friendship> FindFriendshipWithWaitingStatusByTwoIdsAsync(string currentUserId, string otherUserId);
         Task<Friendship> FindFriendshipWithAcceptedStatusByTwoIdsAsync(string currentUserId, string otherUserId);
