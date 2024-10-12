@@ -19,8 +19,10 @@ Conectly is social network project that aims to develop a web-based social netwo
 
 ## Getting Started
 
+### 1.Compilation
+Open a terminal and run the following command to clone the project repository:
 
-
+- git clone <repository-url>
 
 This concludes the setup guide for this project. If you need further assistance you can reach me via email:
 - **Full name**: Dimitar Dimitrov
