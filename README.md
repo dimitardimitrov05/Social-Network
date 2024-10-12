@@ -22,6 +22,5 @@ Conectly is social network project that aims to develop a web-based social netwo
 1. Create a scalable and secure social networking platform.
 2. Ensure an intuitive and user-friendly interface.
 3. Implement efficient real-time communication and notifications.
-4. Provide robust privacy and security features for users.
 
 ## Getting Started
