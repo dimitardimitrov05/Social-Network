@@ -1,6 +1,8 @@
 ﻿@model Connectly.Models.PostViewModels.IndexViewModel
 @{
     ViewData["Title"] = "Home Page";
+    int totalPages = Model.Posts.TotalPages;
+    int currentPage = Model.Posts.PageIndex;
 }
 
 <div class="container px-4">
@@ -9,12 +11,13 @@
             <div class="mt-4">
                 <div class="bg-white shadow rounded-lg mb-4 p-4">
                     <form method="post" asp-controller="Posts" asp-action="Add">
+                        <span asp-validation-for="PostContent" class="text-danger" style="font-size:12px;">@ViewBag.NullPostError</span>
                         <textarea class="form-control block w-full border rounded p-2 mb-4" rows="2" asp-for="PostContent" placeholder="What's on your mind?">
                         <span asp-validation-for="PostContent" class="text-danger" style="font-size:12px;"></span>
                         </textarea>
                         <div class="flex justify-between items-center">
-                            <div>
-                                <span asp-validation-for="PostVisibility" class="text-danger" style="font-size:12px;"></span>
+                            <div class="flex flex-col">
+                                <span asp-validation-for="PostVisibility" class="text-danger" style="font-size:12px;">@ViewBag.NullVisibilityError</span>
                                 <select class="border-none text-blue-500" asp-for="PostVisibility">
                                     <option value="" disabled selected>Who can see this post</option>
                                     <option value="Friends">Friends</option>
@@ -37,7 +40,7 @@
                     </div>
                 </div>
 
-                @foreach (var post in Model.Posts)
+                @foreach (var post in Model.Posts.Items)
                 {
                     <div class="bg-white shadow rounded-lg mb-4 p-4">
                         <div class="flex items-center mb-4">
@@ -69,6 +72,42 @@
                         <p class="whitespace-pre-wrap">@post.Text</p>
                     </div>
                 }
+                <div class="flex">
+                    <div class="mx-auto">
+                        <nav class="mb-md-0 mb-5">
+                            <input type="hidden" id="currentPage" value="@currentPage" />
+                            <input type="hidden" id="totalPages" value="@totalPages" />
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link text-black" id="firstPage" asp-route-pageNumber="1">
+                                        <span>First</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link text-black" id="previousPage" asp-route-pageNumber="@(Model.Posts.PageIndex - 1)">
+                                        <span><i class="fa-solid fa-arrow-left"></i></span>
+                                    </a>
+                                </li>
+                                @for (int i = 1; i <= totalPages; i++)
+                                {
+                                    <li class="page-item @(currentPage == i ? "active" : "")" data-page="@i" style="display:none;">
+                                        <a class="page-link text-black" asp-route-pageNumber="@i">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <a class="page-link text-black" id="nextPage" asp-route-pageNumber="@(Model.Posts.PageIndex + 1)">
+                                        <span><i class="fa-solid fa-arrow-right"></i></span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link text-black" id="lastPage" asp-route-pageNumber="@Model.Posts.TotalPages">
+                                        <span>Last</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="hidden lg:block grid-cols-1">
@@ -95,6 +134,7 @@
                 </div>
                 <div class="modal-body">
                     <form method="post">
+                        <span asp-validation-for="EmailOfReceiver" class="text-danger">@ViewBag.EmailError</span>
                         <input type="text" class="form-control" asp-for="EmailOfReceiver" placeholder="Write the email of your friend" />
                         <button type="submit" asp-controller="Invitations" asp-action="Add" class="btn btn-primary mt-2" style="float:right">Send</button>
                     </form>
@@ -106,4 +146,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/pagination.js"></script>
 }

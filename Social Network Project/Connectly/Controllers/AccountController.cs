@@ -15,17 +15,17 @@ namespace Connectly.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly ApplicationDbContext _context;
         private readonly IFriendshipService _friendshipService;
         private readonly IPostService _postService;
+        private readonly IInvitationService _invitationService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, IFriendshipService friendshipService, IPostService postService)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IFriendshipService friendshipService, IPostService postService, IInvitationService invitationService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _context = context;
             _friendshipService = friendshipService;
             _postService = postService;
+            _invitationService = invitationService;
         }
 
         [HttpGet]
@@ -39,7 +39,7 @@ namespace Connectly.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var findInvite = await _context.Invitations.Where(x => x.UserRegistratedFromInvite == model.EmailAddress).FirstOrDefaultAsync();
+            var findInvite = await _invitationService.FindInvitationByEmailAsync(model.EmailAddress);
             if (!ModelState.IsValid || findInvite == null || findInvite.VerificationCode != model.VerificationCode || DateTime.Now > findInvite.ExpirationOfInvite)
             {
                 return View(model);

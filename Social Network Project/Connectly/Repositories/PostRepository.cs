@@ -1,6 +1,7 @@
 ﻿using Connectly.Contracts;
 using Connectly.Data;
 using Connectly.Data.Entities;
+using Connectly.Models.PostViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Connectly.Repositories
@@ -33,13 +34,13 @@ namespace Connectly.Repositories
             return await _context.Posts.FirstAsync(x => x.Id == postId);
         }
 
-        public async Task<List<Post>> GetAllVisiblePostsForCurrentUserAsync(string currentUserId)
+        public async Task<IQueryable<PostViewModel>> GetAllVisiblePostsForCurrentUserAsync(string currentUserId)
         {
             var userFriendIds = await _friendshipRepository.FindIdsOfAllFriendsAsync(currentUserId);
 
             var friendsOfFriendsIds = await _friendshipRepository.FindIdsOfAllFriendsOfFriendsAsync(currentUserId);
 
-            return await _context.Posts
+            var posts = _context.Posts
                 .Include(p => p.User)
                 .ThenInclude(x => x.UserFriendships)
                 .ThenInclude(x => x.Friendship)
@@ -48,7 +49,19 @@ namespace Connectly.Repositories
                     (p.UserId == currentUserId) ||
                     (p.Visibility == "Friends" && userFriendIds.Contains(p.UserId)) ||
                     (p.Visibility == "Friends Of friends" && (userFriendIds.Contains(p.UserId) || friendsOfFriendsIds.Contains(p.UserId))))
-                .ToListAsync();
+                .Select(x => new PostViewModel
+                {
+                    Id = x.Id,
+                    Text = x.Text,
+                    UserFirstName = x.User.FirstName,
+                    UserLastName = x.User.LastName,
+                    UserProfilePicture = x.User.Image,
+                    CreationOfPost = x.CreationOfPost,
+                    Visibility = x.Visibility,
+                    UserId = x.UserId,
+                }).OrderByDescending(x => x.CreationOfPost);
+
+            return posts;
         }
 
         public async Task<List<Post>> GetCurrentUserPostsAsync(string currentUserId)

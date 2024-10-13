@@ -52,5 +52,15 @@ namespace Connectly.Services
             int code = random.Next(100000, 1000000);
             return code.ToString("D6");
         }
+
+        public async Task<Invitation> FindInvitationByEmailAsync(string email)
+        {
+            if (email == null)
+            {
+                throw new ArgumentException("Something went wrong");
+            }
+
+            return await _invitationRepository.FindInvitationByEmailAsync(email);
+        }
     }
 }

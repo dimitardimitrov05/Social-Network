@@ -24,6 +24,7 @@ namespace Connectly.Data
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new UserRoleConfiguration());
             builder.ApplyConfiguration(new UserFriendshipConfiguration());
+            builder.ApplyConfiguration(new  PostConfiguration());
 
             base.OnModelCreating(builder);
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Connectly.Models.Pagination;
+using System.ComponentModel.DataAnnotations;
 
 namespace Connectly.Models.PostViewModels
 {
@@ -12,9 +13,10 @@ namespace Connectly.Models.PostViewModels
         [Required]
         public string LastName { get; set; } = null!;
         public string? ProfilePicture { get; set; }
+        [EmailAddress]
         public string? EmailOfReceiver { get; set; }
         public string? PostContent { get; set; }
         public string? PostVisibility { get; set; }
-        public List<PostViewModel> Posts { get; set; } = new List<PostViewModel>();
+        public PaginatedList<PostViewModel>? Posts { get; set; }
     }
 }

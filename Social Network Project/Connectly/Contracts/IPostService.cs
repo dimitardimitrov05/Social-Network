@@ -5,7 +5,7 @@ namespace Connectly.Contracts
 {
     public interface IPostService
     {
-        Task<List<PostViewModel>> ListPostsAsync(string currentUserId);
+        Task<IQueryable<PostViewModel>> ListPostsAsync(string currentUserId);
         Task CreatePostAsync(IndexViewModel model, User user);
         Task DeletePostAsync(Guid id);
         Task<List<PostViewModel>> CurrentUserPostsAsync(string cuurentUserId);

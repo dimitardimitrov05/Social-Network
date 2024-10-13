@@ -21,9 +21,15 @@ namespace Connectly.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(IndexViewModel model)
         {
-            if (model.PostContent == null || model.PostVisibility == null)
+            if (model.PostContent == null)
             {
-                return RedirectToAction("Index", "Home");
+                TempData["NullPostError"] = "Please write the content of your post";
+                return RedirectToAction("Index", "Home", model);
+            }
+            if (model.PostVisibility == null)
+            {
+                TempData["NullVisibilityError"] = "Please choose who to see your post";
+                return RedirectToAction("Index", "Home", model);
             }
 
             var user = await _userManager.GetUserAsync(this.User);

@@ -40,7 +40,7 @@ namespace Connectly.Data.Configurations
                 LastName = "Admin",
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
-                Email = "admin@gmai.com",
+                Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
                 DateOfBirth = new DateTime(2005, 5, 10),
                 Gender = "Male",

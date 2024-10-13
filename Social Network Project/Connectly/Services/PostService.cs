@@ -58,7 +58,7 @@ namespace Connectly.Services
             await _postRepository.DeletePostAsync(post);
         }
 
-        public async Task<List<PostViewModel>> ListPostsAsync(string currentUserId)
+        public async Task<IQueryable<PostViewModel>> ListPostsAsync(string currentUserId)
         {
             var userFriendIds = await _friendshipRepository.FindIdsOfAllFriendsAsync(currentUserId);
 
@@ -66,19 +66,7 @@ namespace Connectly.Services
 
             var visiblePosts = await _postRepository.GetAllVisiblePostsForCurrentUserAsync(currentUserId);
 
-            return visiblePosts
-                .Select(x => new PostViewModel
-                {
-                    Id = x.Id,
-                    Text = x.Text,
-                    UserFirstName = x.User.FirstName,
-                    UserLastName = x.User.LastName,
-                    UserProfilePicture = x.User.Image,
-                    CreationOfPost = x.CreationOfPost,
-                    Visibility = x.Visibility,
-                    UserId = x.UserId,
-                }).OrderByDescending(x => x.CreationOfPost)
-                .ToList();
+            return visiblePosts;
         }
 
         public async Task<List<PostViewModel>> UserPostsAsync(string currentUserId, string otherUserId)

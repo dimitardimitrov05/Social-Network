@@ -22,7 +22,7 @@ namespace Connectly.Repositories
 
         public async Task<Invitation> FindInvitationByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await _context.Invitations.Where(x => x.UserRegistratedFromInvite == email).FirstOrDefaultAsync();
         }
     }
 }
